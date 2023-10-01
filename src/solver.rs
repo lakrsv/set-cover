@@ -84,11 +84,13 @@ impl Solver {
 
 #[cfg(test)]
 mod tests {
+    use std::hash::Hash;
+
     use super::*;
 
     #[test]
     fn test_basic_functionality() {
-        let mut input = SolverInput::new();
+        let mut input = SolverInput::new(HashMap::new());
         input.add_solution(1, vec![1, 2, 3].into_iter().collect());
         input.add_solution(2, vec![2, 4].into_iter().collect());
         input.add_solution(3, vec![3, 5].into_iter().collect());
@@ -115,7 +117,7 @@ mod tests {
 
     #[test]
     fn test_empty_input() {
-        let input = SolverInput::new();
+        let input = SolverInput::new(HashMap::new());
         let problems: HashSet<u32> = HashSet::new();
 
         let solver = Solver::GreedySolver(input);
@@ -138,7 +140,7 @@ mod tests {
 
     #[test]
     fn test_single_set_covers_all() {
-        let mut input = SolverInput::new();
+        let mut input = SolverInput::new(HashMap::new());
         input.add_solution(1, vec![1, 2, 3].into_iter().collect());
 
         let problems: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
@@ -163,7 +165,7 @@ mod tests {
 
     #[test]
     fn test_no_solution_found() {
-        let input = SolverInput::new();
+        let input = SolverInput::new(HashMap::new());
         let problems: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
 
         let solver = Solver::GreedySolver(input);

@@ -32,6 +32,6 @@ fn main() {
     let input = SolverInput::new(solutions.problems_by_solution);
     let solution = Solver::GreedySolver(input).solve(args.problem.iter().cloned().collect());
 
-    print!("Best solutions: {:?}\n", solution.get_best_solutions());
-    print!("Unsolved problems: {:?}\n", solution.get_unsolved_problems());
+    println!("Best solutions: {:?}", solution.get_best_solutions());
+    println!("Unsolved problems: {:?}", solution.get_unsolved_problems());
 }
