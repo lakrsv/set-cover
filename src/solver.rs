@@ -6,11 +6,12 @@ pub struct SolverInput {
 }
 
 impl SolverInput {
-    pub fn new() -> SolverInput {
+    pub fn new(problems_by_solution: HashMap<u32, HashSet<u32>>) -> SolverInput {
         SolverInput {
-            problems_by_solution: HashMap::new(),
+            problems_by_solution,
         }
     }
+
     pub fn add_solution(&mut self, solution: u32, problems: HashSet<u32>) {
         self.problems_by_solution.insert(solution, problems);
     }
@@ -18,7 +19,7 @@ impl SolverInput {
 
 impl Default for SolverInput {
     fn default() -> Self {
-        Self::new()
+        Self::new(HashMap::new())
     }
 }
 
