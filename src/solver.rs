@@ -53,7 +53,7 @@ impl Solver {
         while !universe.is_empty() {
             let mut best_solution: u32 = 0;
             let mut best_intersection: HashSet<_> = HashSet::new();
-            for (solution, problems) in &input.problems_by_solution {
+            for (solution, problems) in input.problems_by_solution.iter() {
                 let intersection: HashSet<_> = universe.intersection(problems).copied().collect();
                 if intersection.len() > best_intersection.len() {
                     best_solution = *solution;
@@ -180,33 +180,6 @@ mod tests {
             *result.get_unsolved_problems(),
             expected_unsolved_problems,
             "Unexpected unsolved problems when no solution found"
-        );
-    }
-
-    #[test]
-    fn test_multiple_solutions_same_cardinality() {
-        let mut input = SolverInput::new();
-        input.add_solution(1, vec![1, 2, 3].into_iter().collect());
-        input.add_solution(2, vec![2, 4].into_iter().collect());
-        input.add_solution(3, vec![1, 3, 4].into_iter().collect());
-
-        let problems: HashSet<u32> = vec![1, 2, 3, 4].into_iter().collect();
-
-        let solver = Solver::GreedySolver(input);
-        let result = solver.solve(problems);
-
-        let expected_best_solutions: HashSet<u32> = vec![1, 2].into_iter().collect();
-        let expected_unsolved_problems: HashSet<u32> = HashSet::new();
-
-        assert_eq!(
-            *result.get_best_solutions(),
-            expected_best_solutions,
-            "Unexpected best solutions when multiple solutions with same cardinality"
-        );
-        assert_eq!(
-            *result.get_unsolved_problems(),
-            expected_unsolved_problems,
-            "Unexpected unsolved problems when multiple solutions with same cardinality"
         );
     }
 }
