@@ -1,22 +1,28 @@
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, PartialEq)]
-struct SolverInput {
+pub struct SolverInput {
     problems_by_solution: HashMap<u32, HashSet<u32>>,
 }
 
 impl SolverInput {
-    fn new() -> SolverInput {
+    pub fn new() -> SolverInput {
         SolverInput {
             problems_by_solution: HashMap::new(),
         }
     }
-    fn add_solution(&mut self, solution: u32, problems: HashSet<u32>) {
+    pub fn add_solution(&mut self, solution: u32, problems: HashSet<u32>) {
         self.problems_by_solution.insert(solution, problems);
     }
 }
 
-struct SolverOutput {
+impl Default for SolverInput {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub struct SolverOutput {
     best_solutions: HashSet<u32>,
     unsolved_problems: HashSet<u32>,
 }
@@ -30,7 +36,7 @@ impl SolverOutput {
     }
 }
 
-enum Solver {
+pub enum Solver {
     GreedySolver(SolverInput),
 }
 
@@ -117,8 +123,7 @@ mod tests {
         input.add_solution(1, HashSet::from([20]));
         input.add_solution(2, HashSet::from([30]));
 
-        let output = Solver::GreedySolver(input)
-            .solve(HashSet::from([10, 20, 30]));
+        let output = Solver::GreedySolver(input).solve(HashSet::from([10, 20, 30]));
 
         assert_eq!(
             HashSet::from([0, 1, 2]),
@@ -133,15 +138,10 @@ mod tests {
         input.add_solution(1, HashSet::from([20, 30]));
         input.add_solution(2, HashSet::from([30]));
 
-        let output = Solver::GreedySolver(input)
-            .solve(HashSet::from([10, 20, 30]));
+        let output = Solver::GreedySolver(input).solve(HashSet::from([10, 20, 30]));
 
-        assert_eq!(
-            HashSet::from([0, 1]),
-            output.get_best_solutions().clone()
-        );
+        assert_eq!(HashSet::from([0, 1]), output.get_best_solutions().clone());
     }
-
 
     #[test]
     fn test_greedy_solve_no_solution() {
