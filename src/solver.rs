@@ -86,71 +86,127 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_greedy_solve_1() {
+    fn test_basic_functionality() {
         let mut input = SolverInput::new();
-        input.add_solution(0, HashSet::from([10]));
-        input.add_solution(1, HashSet::from([30]));
-        input.add_solution(2, HashSet::from([10, 20, 30, 40]));
+        input.add_solution(1, vec![1, 2, 3].into_iter().collect());
+        input.add_solution(2, vec![2, 4].into_iter().collect());
+        input.add_solution(3, vec![3, 5].into_iter().collect());
 
-        let output = Solver::GreedySolver(input).solve(HashSet::from([10, 20, 30, 40]));
+        let problems: HashSet<u32> = vec![1, 2, 3, 4, 5].into_iter().collect();
 
-        assert_eq!(HashSet::from([2]), output.get_best_solutions().clone());
-    }
-    #[test]
-    fn test_greedy_solve_2() {
-        let mut input = SolverInput::new();
-        input.add_solution(0, HashSet::from([10, 20, 30]));
-        input.add_solution(1, HashSet::from([10, 20]));
-        input.add_solution(2, HashSet::from([50, 60, 70]));
-        input.add_solution(3, HashSet::from([70, 80, 90]));
-        input.add_solution(4, HashSet::from([100]));
-        input.add_solution(5, HashSet::from([110, 120, 130]));
-        input.add_solution(6, HashSet::from([130, 140, 150]));
+        let solver = Solver::GreedySolver(input);
+        let result = solver.solve(problems);
 
-        let output = Solver::GreedySolver(input)
-            .solve(HashSet::from([10, 20, 30, 60, 80, 100, 120, 130, 140]));
+        let expected_best_solutions: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
+        let expected_unsolved_problems: HashSet<u32> = HashSet::new();
 
         assert_eq!(
-            HashSet::from([0, 2, 3, 4, 5, 6]),
-            output.get_best_solutions().clone()
+            *result.get_best_solutions(),
+            expected_best_solutions,
+            "Unexpected best solutions"
+        );
+        assert_eq!(
+            *result.get_unsolved_problems(),
+            expected_unsolved_problems,
+            "Unexpected unsolved problems"
         );
     }
 
     #[test]
-    fn test_greedy_solve_3() {
-        let mut input = SolverInput::new();
-        input.add_solution(0, HashSet::from([10]));
-        input.add_solution(1, HashSet::from([20]));
-        input.add_solution(2, HashSet::from([30]));
+    fn test_empty_input() {
+        let input = SolverInput::new();
+        let problems: HashSet<u32> = HashSet::new();
 
-        let output = Solver::GreedySolver(input).solve(HashSet::from([10, 20, 30]));
+        let solver = Solver::GreedySolver(input);
+        let result = solver.solve(problems);
+
+        let expected_best_solutions: HashSet<u32> = HashSet::new();
+        let expected_unsolved_problems: HashSet<u32> = HashSet::new();
 
         assert_eq!(
-            HashSet::from([0, 1, 2]),
-            output.get_best_solutions().clone()
+            *result.get_best_solutions(),
+            expected_best_solutions,
+            "Unexpected best solutions for empty input"
+        );
+        assert_eq!(
+            *result.get_unsolved_problems(),
+            expected_unsolved_problems,
+            "Unexpected unsolved problems for empty input"
         );
     }
 
     #[test]
-    fn test_greedy_solve_4() {
+    fn test_single_set_covers_all() {
         let mut input = SolverInput::new();
-        input.add_solution(0, HashSet::from([10]));
-        input.add_solution(1, HashSet::from([20, 30]));
-        input.add_solution(2, HashSet::from([30]));
+        input.add_solution(1, vec![1, 2, 3].into_iter().collect());
 
-        let output = Solver::GreedySolver(input).solve(HashSet::from([10, 20, 30]));
+        let problems: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
 
-        assert_eq!(HashSet::from([0, 1]), output.get_best_solutions().clone());
+        let solver = Solver::GreedySolver(input);
+        let result = solver.solve(problems);
+
+        let expected_best_solutions: HashSet<u32> = vec![1].into_iter().collect();
+        let expected_unsolved_problems: HashSet<u32> = HashSet::new();
+
+        assert_eq!(
+            *result.get_best_solutions(),
+            expected_best_solutions,
+            "Unexpected best solutions when a single set covers all"
+        );
+        assert_eq!(
+            *result.get_unsolved_problems(),
+            expected_unsolved_problems,
+            "Unexpected unsolved problems when a single set covers all"
+        );
     }
 
     #[test]
-    fn test_greedy_solve_no_solution() {
+    fn test_no_solution_found() {
+        let input = SolverInput::new();
+        let problems: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
+
+        let solver = Solver::GreedySolver(input);
+        let result = solver.solve(problems);
+
+        let expected_best_solutions: HashSet<u32> = HashSet::new();
+        let expected_unsolved_problems: HashSet<u32> = vec![1, 2, 3].into_iter().collect();
+
+        assert_eq!(
+            *result.get_best_solutions(),
+            expected_best_solutions,
+            "Unexpected best solutions when no solution found"
+        );
+        assert_eq!(
+            *result.get_unsolved_problems(),
+            expected_unsolved_problems,
+            "Unexpected unsolved problems when no solution found"
+        );
+    }
+
+    #[test]
+    fn test_multiple_solutions_same_cardinality() {
         let mut input = SolverInput::new();
-        input.add_solution(0, HashSet::from([10, 20, 30]));
+        input.add_solution(1, vec![1, 2, 3].into_iter().collect());
+        input.add_solution(2, vec![2, 4].into_iter().collect());
+        input.add_solution(3, vec![1, 3, 4].into_iter().collect());
 
-        let output = Solver::GreedySolver(input).solve(HashSet::from([40]));
+        let problems: HashSet<u32> = vec![1, 2, 3, 4].into_iter().collect();
 
-        assert_eq!(HashSet::new(), output.get_best_solutions().clone());
-        assert_eq!(HashSet::from([40]), output.get_unsolved_problems().clone());
+        let solver = Solver::GreedySolver(input);
+        let result = solver.solve(problems);
+
+        let expected_best_solutions: HashSet<u32> = vec![1, 2].into_iter().collect();
+        let expected_unsolved_problems: HashSet<u32> = HashSet::new();
+
+        assert_eq!(
+            *result.get_best_solutions(),
+            expected_best_solutions,
+            "Unexpected best solutions when multiple solutions with same cardinality"
+        );
+        assert_eq!(
+            *result.get_unsolved_problems(),
+            expected_unsolved_problems,
+            "Unexpected unsolved problems when multiple solutions with same cardinality"
+        );
     }
 }
