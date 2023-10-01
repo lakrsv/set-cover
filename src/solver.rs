@@ -84,7 +84,6 @@ impl Solver {
 
 #[cfg(test)]
 mod tests {
-    use std::hash::Hash;
 
     use super::*;
 
